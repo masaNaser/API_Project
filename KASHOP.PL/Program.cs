@@ -1,5 +1,7 @@
 
+using KASHOP.BLL.Services.Category;
 using KASHOP.DAL.Data;
+using KASHOP.DAL.Repository.Category;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,6 +18,8 @@ namespace KASHOP.PL
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
+            builder.Services.AddScoped<ICategoryServices,CategoryServices>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>

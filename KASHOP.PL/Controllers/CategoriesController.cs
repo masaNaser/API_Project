@@ -1,4 +1,5 @@
-﻿using KASHOP.DAL.Data;
+﻿using KASHOP.BLL.Services.Category;
+using KASHOP.DAL.Data;
 using KASHOP.DAL.Dto.Request;
 using KASHOP.DAL.Dto.Response;
 using KASHOP.DAL.Models;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using System.Threading.Tasks;
 
 namespace KASHOP.PL.Controllers
 {
@@ -15,39 +17,38 @@ namespace KASHOP.PL.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly IStringLocalizer<SharedResources> _localizer;
-        public CategoriesController(ApplicationDbContext context, IStringLocalizer<SharedResources> localizer)
+        private readonly ICategoryServices _categoryServices;
+        public CategoriesController( IStringLocalizer<SharedResources> localizer,ICategoryServices categoryServices)
         {
-            _context = context;
             _localizer = localizer;
+            _categoryServices = categoryServices;
         }
         [HttpGet("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var categories =await _categoryServices.GetAllCategories();
             // جلب الأقسام مع ترجماتها فوراً من قاعدة البيانات
-            var categories = _context.Categories
-                                     .Include(c => c.Translations)
-                                     .ToList();
+            //var categories = _context.Categories
+            //                         .Include(c => c.Translations)
+            //                         .ToList();
 
-            var categoryDtos = categories.Adapt<List<CategoryResponse>>();
+            //var categoryDtos = categories.Adapt<List<CategoryResponse>>();
 
             return Ok(new
             {
                 Message = _localizer["Success"].Value,
-                Data = categoryDtos
+                Data = categories
             });
         }
         [HttpPost("Create")]
-        public IActionResult Create(CategoryRequest request)
+        public async Task<IActionResult> Create(CategoryRequest request)
         {
-            //if (request == null) {
-            //    return BadRequest(_localizer["InvalidRequest"].Value);
-            //}
-            var category = request.Adapt<Category>();
-            _context.Add(category);
-            _context.SaveChanges();
-            return NoContent();
+            //var category = request.Adapt<Category>();
+            //_context.Add(category);
+            //_context.SaveChanges();
+           var response =await _categoryServices.Create(request);
+            return Ok(new {Data = response});
         }
 
     }
