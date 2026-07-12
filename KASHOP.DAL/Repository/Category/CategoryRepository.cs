@@ -1,4 +1,5 @@
 ﻿using KASHOP.DAL.Data;
+using KASHOP.DAL.Repository.Generic;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,24 +9,12 @@ using System.Threading.Tasks;
 
 namespace KASHOP.DAL.Repository.Category
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : GenericRepository<Models.Category>, ICategoryRepository
     {
         private readonly ApplicationDbContext _context;
-        public CategoryRepository(ApplicationDbContext context)
+       public CategoryRepository(ApplicationDbContext context ) : base(context)
         {
             _context = context;
-        }
-        async Task<Models.Category> ICategoryRepository.Create(Models.Category category)
-        {
-           await _context.Categories.AddAsync(category);
-           await _context.SaveChangesAsync();
-           return category;     
-        }
-
-        async Task<List<Models.Category>> ICategoryRepository.GetAll()
-        {
-            var categories =await _context.Categories.Include(c => c.Translations).ToListAsync();
-            return categories;
         }
     }
 }

@@ -50,6 +50,16 @@ namespace KASHOP.PL.Controllers
            var response =await _categoryServices.Create(request);
             return Ok(new {Data = response});
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCategoryById(int id)
+        {
+            var category = await _categoryServices.GetCategory(c => c.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return Ok(new { Data = category });
+        }
 
     }
 }
