@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to KASHOP</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); padding: 30px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">KASHOP</h1>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 40px 30px; text-align: center;">
+                            <h2 style="color: #1F2937; margin-top: 0;">Welcome, {UserName}! 🎉</h2>
+                            <p style="color: #4B5563; font-size: 16px; line-height: 1.6;">
+                                Thank you for registering with us using email: <strong>{Email}</strong>.
+                            </p>
+                            <p style="color: #4B5563; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+                                We're thrilled to have you on board!
+                            </p>
+                            <a href="https://localhost:7025/api/Account/ConfirmEmail?email={Email}" target="_blank" style="background-color: #4F46E5; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; padding: 12px 28px; border-radius: 8px; display: inline-block;">Confirm Email</a>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #F9FAFB; padding: 20px; text-align: center; border-top: 1px solid #E5E7EB;">
+                            <p style="color: #9CA3AF; font-size: 12px; margin: 0;">&copy; 2026 KASHOP. All rights reserved.</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
