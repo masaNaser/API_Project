@@ -33,7 +33,7 @@ namespace KASHOP.BLL.Services.Category
         {
             var categories =await _categoryRepository.GetAll(new string[]
             {
-                (nameof(DAL.Models.Category.Translations))
+                (nameof(DAL.Models.Category.Translations)),(nameof(DAL.Models.Category.CreatedBy))
             }); // category
             //لازم نحوله ل ريسبونس
             return categories.Adapt<List<CategoryResponse>>();

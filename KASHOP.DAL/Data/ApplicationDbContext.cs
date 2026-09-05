@@ -27,7 +27,7 @@ namespace KASHOP.DAL.Data
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken=default)
         {
             var entries = ChangeTracker.Entries<AuditableEntity>();
-            var currentUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
             foreach (var entry in entries)
             {
                 if (entry.State == EntityState.Added)

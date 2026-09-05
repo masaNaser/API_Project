@@ -13,6 +13,7 @@ using System.Globalization;
 using KASHOP.BLL.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using KASHOP.BLL.Mapping;
 
 namespace KASHOP.PL
 {
@@ -31,7 +32,8 @@ namespace KASHOP.PL
             builder.Services.AddScoped<ICategoryServices,CategoryServices>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IEmailSender,EmailSender>();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -79,6 +81,9 @@ namespace KASHOP.PL
 
             var app = builder.Build();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+            MapsterConfig.MapsterConfigRegister();
+            
+            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
