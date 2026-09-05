@@ -16,26 +16,22 @@ namespace KASHOP.PL.Controllers
             _authenticationService = authenticationService;
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var result = await _authenticationService.LoginAsync(request);
             return Ok(result);
         }
         [HttpPost("register")]
 
-        public async Task <IActionResult> Register(RegisterRequest request)
+        public async Task <IActionResult> Register([FromBody]RegisterRequest request)
         {
             var result = await _authenticationService.RegisterAsync(request);
             return Ok(result);
         }
         [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string email)
+        public async Task<IActionResult> ConfirmEmail([FromQuery]ConfirmEmailRequest request)
         {
-            if(string.IsNullOrEmpty(email))
-            {
-                return BadRequest(new { Message = "Email is required." });
-            }
-            var isConfirmed = await _authenticationService.ConfirmEmailAsync(email);
+            var isConfirmed = await _authenticationService.ConfirmEmailAsync(request);
 
             if (!isConfirmed)
             {

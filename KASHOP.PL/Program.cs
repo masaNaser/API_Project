@@ -11,6 +11,8 @@ using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using System.Globalization;
 using KASHOP.BLL.Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace KASHOP.PL
 {
@@ -53,6 +55,26 @@ namespace KASHOP.PL
                 options.User.RequireUniqueEmail = true;
             }).
                 AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["ApiSettings:issuer"],
+                    ValidAudience = builder.Configuration["ApiSettings:audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["ApiSettings:SecretKey"]))
+                };
+            });
 
 
             var app = builder.Build();

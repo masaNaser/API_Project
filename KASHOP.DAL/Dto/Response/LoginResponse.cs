@@ -11,8 +11,8 @@ namespace KASHOP.DAL.Dto.Response
     {
         public string Message { get; set; }
 
-        //[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        //public string Token { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string AccessToken { get; set; }
         //public string RefreshToken { get; set; }
     }
 }

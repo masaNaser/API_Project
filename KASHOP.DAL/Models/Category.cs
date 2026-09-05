@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KASHOP.DAL.Models
 {
-    public class Category
+    public class Category : AuditableEntity
     {
         public int Id { get; set; }
         public string Image { get; set; }

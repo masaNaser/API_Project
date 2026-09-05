@@ -12,7 +12,7 @@ namespace KASHOP.BLL.Services.Authentication
     {
         Task<RegisterResponse>RegisterAsync(RegisterRequest request);
         Task<LoginResponse> LoginAsync(LoginRequest request);
-        Task<bool> ConfirmEmailAsync(string email);
+        Task<bool> ConfirmEmailAsync(ConfirmEmailRequest request);
     }
 
 }
