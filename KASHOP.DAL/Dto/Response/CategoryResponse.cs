@@ -14,6 +14,6 @@ namespace KASHOP.DAL.Dto.Response
         public string Image { get; set; }
         public string User { get; set; }
         public string Name { get; set; }
-        public List<CategoryTranslationResponse> Translations { get; set; }
+        //public List<CategoryTranslationResponse> Translations { get; set; }
     }
 }

@@ -10,5 +10,6 @@ namespace KASHOP.DAL.Dto.Request
     {
         public string Image { get; set; }
         public List<CategoryTranslationRequest> Translations { get; set; }
-}
+    
+    }
 }

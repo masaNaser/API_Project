@@ -16,7 +16,6 @@ namespace KASHOP.PL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly IStringLocalizer<SharedResources> _localizer;
@@ -28,7 +27,10 @@ namespace KASHOP.PL.Controllers
         }
         [HttpGet("")]
         public async Task<IActionResult> Index()
-        {
+        {       
+            //لو بدي اعتمد هاي الطريقة رح احتاج ارسل هاي مع كل ريكوست 
+            //var lang = Request.Headers["Accept-Language"].ToString();
+
             var categories =await _categoryServices.GetAllCategories();
             // جلب الأقسام مع ترجماتها فوراً من قاعدة البيانات
             //var categories = _context.Categories
@@ -36,13 +38,14 @@ namespace KASHOP.PL.Controllers
             //                         .ToList();
 
             //var categoryDtos = categories.Adapt<List<CategoryResponse>>();
-
             return Ok(new
             {
                 Message = _localizer["Success"].Value,
                 Data = categories
             });
         }
+
+        [Authorize]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(CategoryRequest request)
         {
@@ -52,6 +55,7 @@ namespace KASHOP.PL.Controllers
            var response =await _categoryServices.Create(request);
             return Ok(new {Data = response});
         }
+      
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
@@ -61,6 +65,18 @@ namespace KASHOP.PL.Controllers
                 return NotFound();
             }
             return Ok(new { Data = category });
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]  int id)
+        {
+            var result = await _categoryServices.Delete(id);
+            if (!result)
+            {
+                return NotFound(new { Message = _localizer["Error"].Value });
+            }
+            return NoContent();
         }
 
     }

@@ -15,19 +15,27 @@ namespace KASHOP.PL.Controllers
         {
             _authenticationService = authenticationService;
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var result = await _authenticationService.LoginAsync(request);
             return Ok(result);
         }
-        [HttpPost("register")]
 
+
+        [HttpPost("register")]
         public async Task <IActionResult> Register([FromBody]RegisterRequest request)
         {
-            var result = await _authenticationService.RegisterAsync(request);
-            return Ok(result);
+            var response  = await _authenticationService.RegisterAsync(request);
+            // إذا كانت العملية تحتوي على أخطاء أو IsSuccess == false
+            if (response.Errors!=null && response.Errors.Any()) // أو حسب الفحص لديك
+            {
+                return BadRequest(response); // سيرجع HTTP Status 400 Bad Request
+            }
+            return Ok(response);
         }
+
         [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail([FromQuery]ConfirmEmailRequest request)
         {

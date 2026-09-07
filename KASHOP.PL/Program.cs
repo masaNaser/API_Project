@@ -92,6 +92,7 @@ namespace KASHOP.PL
             }
 
             app.UseHttpsRedirection();
+            app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
             app.UseAuthentication();
             app.UseAuthorization();

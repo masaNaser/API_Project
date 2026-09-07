@@ -11,7 +11,7 @@ namespace KASHOP.DAL.Repository.Generic
     {
         Task<T> Create(T entity);
         //Task<T> Update(T entity);
-        //Task Delete(int id);
+        Task Delete(int id);
         Task<T> GetOne(Expression<Func<T, bool>> filter, string[]? includes = null);
         Task<List<T>> GetAll(string[]?includes = null);
     }
