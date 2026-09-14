@@ -32,7 +32,7 @@ namespace KASHOP.BLL.Services.Category
 تحفظ قاعدة البيانات التصنيف وتولد له رقم معرف جديد (Id).
 النتيجة المُرجعة في المتغير savedCategory تحتوي على البيانات الأساسية والـ Id الجديد، لكن خاصية CreatedBy (كائن المستخدم) تكون لا تزال null لأن EF Core لا يجلب العلاقات تلقائياً أثناء الحفظ.
              */
-            var savedCategory = await _categoryRepository.Create(categories);
+            var savedCategory = await _categoryRepository.CreateAsync(categories);
             //هاد السطر عشان نرجع الكائن مع الـ CreatedById و CreatedDate و CreatedBy (كائن المستخدم) بعد الحفظ
             // لانه هدول القيم قبل الحفظ بكونو نلل بالتالي بنحتاج نعمل انكلود عشان نجيبهم من الداتا بيس 
             var categoryResponse = await GetCategory(c => c.Id == savedCategory.Id);
@@ -42,7 +42,7 @@ namespace KASHOP.BLL.Services.Category
 
         public async Task<List<CategoryResponse>> GetAllCategories()
         {
-            var categories =await _categoryRepository.GetAll(new string[]
+            var categories =await _categoryRepository.GetAllAsync(new string[]
             {
                 (nameof(DAL.Models.Category.Translations)),(nameof(DAL.Models.Category.CreatedBy))
             }); // category
@@ -56,10 +56,10 @@ namespace KASHOP.BLL.Services.Category
 
         public async Task<CategoryResponse> GetCategory(Expression<Func<DAL.Models.Category, bool>> filter)
         {
-            var category = await _categoryRepository.GetOne(filter, new string[]
+            var category = await _categoryRepository.GetOneAsync(filter, new string[]
             {
                 nameof(DAL.Models.Category.Translations),
-                nameof(DAL.Models.Category.CreatedBy) // أضفناها هنا
+                nameof(DAL.Models.Category.CreatedBy) 
             });
 
             return category.Adapt<CategoryResponse>();
@@ -67,17 +67,28 @@ namespace KASHOP.BLL.Services.Category
 
         public async Task<CategoryResponse> Update(int id, CategoryRequest request)
         {
-            throw new NotImplementedException();
+            var category = await _categoryRepository.GetOneAsync(c => c.Id == id,new string[]
+            {
+                nameof(DAL.Models.Category.Translations),
+                nameof(DAL.Models.Category.CreatedBy) 
+            });
+            if(category == null) throw new KeyNotFoundException("Category not found");
+
+            //بنستخدم Mapster لتحديث خصائص الكائن الحالي بالقيم الجديدة من الريكوست
+            request.Adapt(category);
+            await _categoryRepository.UpdateAsync(category);
+            var updatedCategory = await GetCategory(c => c.Id == id);
+            return updatedCategory;  
         }
 
         public async Task<bool> Delete(int id)
         {
-          var category =await _categoryRepository.GetOne(c => c.Id == id);
+          var category =await _categoryRepository.GetOneAsync(c => c.Id == id);
             if (category == null)
             {
                 return false;
             }
-            await _categoryRepository.Delete(id);
+            await _categoryRepository.DeleteAsync(id);
             return true;
 
         }

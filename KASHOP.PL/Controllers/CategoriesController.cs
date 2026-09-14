@@ -68,6 +68,21 @@ namespace KASHOP.PL.Controllers
         }
 
         [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CategoryRequest request)
+        {
+            var updatedCategory = await _categoryServices.Update(id, request);
+            if (updatedCategory == null)
+            {
+                return NotFound(new { Message = _localizer["Error"].Value });
+            }
+            return Ok(new { Data = updatedCategory });
+        }
+
+
+
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute]  int id)
         {

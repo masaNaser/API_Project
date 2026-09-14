@@ -16,25 +16,14 @@ namespace KASHOP.DAL.Repository.Generic
         public GenericRepository(ApplicationDbContext context) {
             _context = context;
         }
-        public async Task<T> Create(T entity)
+        public async Task<T> CreateAsync(T entity)
         {
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task Delete(int id)
-        {
-            var entity = await _context.Set<T>().FindAsync(id);
-            if(entity != null)
-            {
-                _context.Set<T>().Remove(entity);
-                await _context.SaveChangesAsync();
-
-            }
-        }
-
-        public async Task<List<T>> GetAll(string[]? includes = null)
+        public async Task<List<T>> GetAllAsync(string[]? includes = null)
         {
             IQueryable<T> query = _context.Set<T>();
             if(includes != null)
@@ -47,7 +36,7 @@ namespace KASHOP.DAL.Repository.Generic
             return await query.ToListAsync();
         }
 
-        public async Task<T> GetOne(Expression<Func<T,bool>>filter,string[]? includes = null)
+        public async Task<T> GetOneAsync(Expression<Func<T,bool>>filter,string[]? includes = null)
         {
             IQueryable<T> query = _context.Set<T>();
             if(includes != null)
@@ -58,6 +47,24 @@ namespace KASHOP.DAL.Repository.Generic
                 }
             }
             return await query.FirstOrDefaultAsync(filter);
+        }
+
+        public async Task<T> UpdateAsync(T entity)
+        {
+             _context.Update(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            if(entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+                await _context.SaveChangesAsync();
+
+            }
         }
     }
 }
