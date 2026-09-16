@@ -2,12 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KASHOP.DAL.Data
 {
@@ -20,7 +15,7 @@ namespace KASHOP.DAL.Data
         public DbSet<CatagoryTranslations> CatagoryTranslations { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductTranslations> ProductTranslations { get; set; }
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Brand> Brands { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;

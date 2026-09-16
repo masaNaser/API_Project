@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace KASHOP.DAL.Models
 {
-    public class Category : AuditableEntity
+    //البراند ممكن من خلاله انه اليوزر يعمل فلترة حسب الشركات وهيك 
+    public class Brand :AuditableEntity
     {
         public int Id { get; set; }
-        public string Image { get; set; }
-        public List<CatagoryTranslations> Translations { get; set; }
+        public string Name { get; set; }
+        public string Logo { get; set; }    
         public List<Product> Products { get; set; }
     }
 }

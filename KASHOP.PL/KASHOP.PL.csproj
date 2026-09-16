@@ -23,4 +23,8 @@
     <ProjectReference Include="..\KASHOP.BLL\KASHOP.BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Uploads\Images\" />
+  </ItemGroup>
+
 </Project>

@@ -56,15 +56,11 @@ namespace KASHOP.DAL.Repository.Generic
             return entity;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(T entity)
         {
-            var entity = await _context.Set<T>().FindAsync(id);
-            if(entity != null)
-            {
-                _context.Set<T>().Remove(entity);
-                await _context.SaveChangesAsync();
-
-            }
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

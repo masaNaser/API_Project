@@ -10,7 +10,6 @@ namespace KASHOP.DAL.Dto.Response
     public class RegisterResponse
     {
         // رسالة تأكيد للواجهة الأمامية (Frontend)
-        public string Message { get; set; }
         //public string Token { get; set; };
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? UserId { get; set; }
