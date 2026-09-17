@@ -14,6 +14,8 @@ using KASHOP.BLL.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using KASHOP.BLL.Mapping;
+using KASHOP.BLL.Services.Product;
+using KASHOP.BLL.Services.FileServices;
 
 namespace KASHOP.PL
 {
@@ -32,6 +34,8 @@ namespace KASHOP.PL
             builder.Services.AddScoped<ICategoryServices,CategoryServices>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IEmailSender,EmailSender>();
+            builder.Services.AddScoped<IFileServices, FileServices>();
+            builder.Services.AddScoped<IProductServices,ProductServices>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
