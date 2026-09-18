@@ -17,11 +17,11 @@ namespace KASHOP.PL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesControllers : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly IStringLocalizer<SharedResources> _localizer;
         private readonly ICategoryServices _categoryServices;
-        public CategoriesControllers( IStringLocalizer<SharedResources> localizer,ICategoryServices categoryServices)
+        public CategoriesController( IStringLocalizer<SharedResources> localizer,ICategoryServices categoryServices)
         {
             _localizer = localizer;
             _categoryServices = categoryServices;

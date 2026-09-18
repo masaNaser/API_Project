@@ -89,9 +89,34 @@ namespace KASHOP.BLL.Services.Product
             throw new NotImplementedException();
         }
 
-        public Task<Result<List<ProductListResponse>>> GetAllProducts()
+        public async Task<Result<List<ProductListResponse>>> GetAllProducts()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var products = await _productRepository.GetAllAsync(new string[]
+                {
+                    nameof(DAL.Models.Product.Translations),
+                    nameof(DAL.Models.Product.Brand),
+                    nameof(DAL.Models.Product.Category),
+                    nameof(DAL.Models.Product.SubImages),
+                    nameof(DAL.Models.Product.CreatedBy)
+                });
+                return new Result<List<ProductListResponse>>
+                {
+                    Success = true,
+                    Message = "Success",
+                    Data = products.Adapt<List<ProductListResponse>>()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Result<List<ProductListResponse>>
+                {
+                    Success = false,
+                    Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+                    Data = null
+                };
+            }
         }
 
         public Task<Result<List<ProductListResponse>>> GetProductByBrandId(int brandId)

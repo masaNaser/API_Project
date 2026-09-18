@@ -14,8 +14,9 @@ namespace KASHOP.DAL.Dto.Response
         public decimal BasePrice { get; set; }
         public decimal Discount { get; set; }
         public decimal FinalPrice { get; set; }
+        public int Quantity { get; set; }
         public double Rating { get; set; }
         public string BrandName { get; set; }
-        public bool IsInStock { get; set; }
+        public bool IsInStock => Quantity > 0;
     }
 }

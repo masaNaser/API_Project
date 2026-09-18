@@ -8,10 +8,10 @@ namespace KASHOP.PL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountControllers : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
-        public AccountControllers(IAuthenticationService authenticationService )
+        public AccountController(IAuthenticationService authenticationService )
         {
             _authenticationService = authenticationService;
         }

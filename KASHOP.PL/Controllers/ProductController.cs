@@ -8,15 +8,21 @@ namespace KASHOP.PL.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductControllers : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IProductServices _productServices;
 
-        public ProductControllers(IProductServices productServices)
+        public ProductController(IProductServices productServices)
         {
             _productServices = productServices;
         }
-        [HttpPost]
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var result = await _productServices.GetAllProducts();
+            return result.Success ? Ok(result) : NotFound(result);
+        }
+        [HttpPost("Create")]
         public async Task<IActionResult> CreateProduct([FromForm] ProductRequest request)
         {
             var result = await _productServices.CreateProduct(request);

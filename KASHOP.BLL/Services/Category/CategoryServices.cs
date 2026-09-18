@@ -54,8 +54,10 @@ namespace KASHOP.BLL.Services.Category
             {
                 var categories = await _categoryRepository.GetAllAsync(new string[]
                 {
-                (nameof(DAL.Models.Category.Translations)),(nameof(DAL.Models.Category.CreatedBy))
-                }); // category
+                (nameof(DAL.Models.Category.Translations)),
+                    (nameof(DAL.Models.Category.CreatedBy))
+                }); 
+                // category
                     //بجيب اللغة بشكل تلقائي بدون ما نرسل اي قيمة بالريكوست 
                     //var lang = CultureInfo.CurrentUICulture.Name;
                     // حذفناها لانه ما رح نحتاجها لانه عدلنا بكود ال mapster عشان يجيب الترجمة بشكل تلقائي حسب اللغة الحالية
