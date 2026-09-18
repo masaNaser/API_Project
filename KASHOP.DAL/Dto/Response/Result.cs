@@ -11,9 +11,7 @@ namespace KASHOP.DAL.Dto.Response
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public T? Data { get; set; }
+        public T Data { get; set; }
 
     }
 }

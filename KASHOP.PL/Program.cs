@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using KASHOP.BLL.Mapping;
 using KASHOP.BLL.Services.Product;
 using KASHOP.BLL.Services.FileServices;
+using KASHOP.DAL.Repository.Product;
 
 namespace KASHOP.PL
 {
@@ -36,6 +37,7 @@ namespace KASHOP.PL
             builder.Services.AddScoped<IEmailSender,EmailSender>();
             builder.Services.AddScoped<IFileServices, FileServices>();
             builder.Services.AddScoped<IProductServices,ProductServices>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>

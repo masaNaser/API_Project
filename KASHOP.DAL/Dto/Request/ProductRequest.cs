@@ -15,7 +15,7 @@ namespace KASHOP.DAL.Dto.Request
         public IFormFile MainImage { get; set; }
         public List<IFormFile>? SubImages { get; set; }
         public int CategoryId { get; set; }
-        public int BrandId { get; set; }
+        public int? BrandId { get; set; }
         public List<ProductTranslationRequest> Translations { get; set; }
     }
 }

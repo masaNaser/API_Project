@@ -27,7 +27,6 @@ namespace KASHOP.BLL.Services.Product
                     {
                         Success = false,
                         Message = "Main image is required.",
-                        Data = false
                     };
                 }
                 var mainImageUrl = await _fileServices.UploadFileAsync(request.MainImage);
@@ -40,15 +39,18 @@ namespace KASHOP.BLL.Services.Product
                     };
                 }
                 var subImageUrls = new List<string>();
+                //هل قام المستخدم بإرسال قائمة صور فرعية من الأساس
                 if (request.SubImages != null && request.SubImages.Any()) 
                 { 
                     foreach (var image in request.SubImages)
                     {
+                        //هل هذه الصورة المحددة داخل القائمة صالحة ولها حجم، أم أنها ملف فارغ / معطوب؟
                         if (image != null && image.Length > 0)
                         {
                             var subImageUrl = await _fileServices.UploadFileAsync(image);
                             if (subImageUrl.Success)
                             {
+                                //ضفنا الصور الفرعية ع ليست عشان نقدر نعمل ال مابينج ونخزنهن بالداتا بيس
                                 subImageUrls.Add(subImageUrl.Data);
                             }
                         }
@@ -68,7 +70,7 @@ namespace KASHOP.BLL.Services.Product
                 return new Result<bool>
                 {
                     Success = true,
-                    Message = "Success",
+                    Message = "Success"
                 };
 
             }
@@ -77,7 +79,7 @@ namespace KASHOP.BLL.Services.Product
                 return new Result<bool>
                 {
                     Success = false,
-                    Message = $"An error occurred: {ex.Message}",
+                    Message = $"An error occurred: {ex.InnerException?.Message ?? ex.Message}"
                 };
             }
         }
