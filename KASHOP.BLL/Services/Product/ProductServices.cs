@@ -1,9 +1,9 @@
 ﻿using KASHOP.BLL.Services.FileServices;
 using KASHOP.DAL.Dto.Request;
 using KASHOP.DAL.Dto.Response;
-using KASHOP.DAL.Models;
 using KASHOP.DAL.Repository.Product;
 using Mapster;
+using System.Linq.Expressions;
 
 namespace KASHOP.BLL.Services.Product
 {
@@ -83,21 +83,15 @@ namespace KASHOP.BLL.Services.Product
                 };
             }
         }
-
-        public Task<Result<bool>> Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Result<List<ProductListResponse>>> GetAllProducts()
+        public async Task<Result<List<ProductListResponse>>> GetAllProducts(Expression<Func<DAL.Models.Product, bool>>? filter=null)
         {
             try
             {
-                var products = await _productRepository.GetAllAsync(new string[]
+                var products = await _productRepository.GetAllAsync(filter,new string[]
                 {
                     nameof(DAL.Models.Product.Translations),
                     nameof(DAL.Models.Product.Brand),
-                    nameof(DAL.Models.Product.Category),
+                 $"{nameof(DAL.Models.Product.Category)}.{nameof(DAL.Models.Category.Translations)}",
                     nameof(DAL.Models.Product.SubImages),
                     nameof(DAL.Models.Product.CreatedBy)
                 });
@@ -114,26 +108,51 @@ namespace KASHOP.BLL.Services.Product
                 {
                     Success = false,
                     Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-                    Data = null
                 };
             }
         }
 
-        public Task<Result<List<ProductListResponse>>> GetProductByBrandId(int brandId)
+        public async Task<Result<ProductDetailsResponse>> GetProduct(Expression<Func<DAL.Models.Product, bool>> filter)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var product = await _productRepository.GetOneAsync(filter, new string[]
+                {
+                    nameof(DAL.Models.Product.Translations),
+                    nameof(DAL.Models.Product.Brand),
+                 $"{nameof(DAL.Models.Product.Category)}.{nameof(DAL.Models.Category.Translations)}",
+                    nameof(DAL.Models.Product.SubImages),
+                    nameof(DAL.Models.Product.CreatedBy)
+                });
+                if (product == null)
+                {
+                    return new Result<ProductDetailsResponse>
+                    {
+                        Success = false,
+                        Message = "Product not found",
+                    };
+                }
+                return new Result<ProductDetailsResponse>
+                {
+                    Success = true,
+                    Message = "Success",
+                    Data = product.Adapt<ProductDetailsResponse>()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Result<ProductDetailsResponse>
+                {
+                    Success = false,
+                    Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message,
+                };
+            }
         }
 
-        public Task<Result<List<ProductListResponse>>> GetProductByCategoryId(int categoryId)
+        public Task<Result<bool>> Delete(int id)
         {
             throw new NotImplementedException();
-        }
-
-        public Task<Result<List<ProductDetailsResponse>>> GetProductById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
+        }       
         public Task<Result<ProductListResponse>> Update(int id, ProductRequest request)
         {
             throw new NotImplementedException();

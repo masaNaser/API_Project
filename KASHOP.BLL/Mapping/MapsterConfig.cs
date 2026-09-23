@@ -11,12 +11,26 @@ namespace KASHOP.BLL.Mapping
         {
             TypeAdapterConfig<Category, CategoryResponse>.NewConfig()
                 .Map(dest => dest.User, src => src.CreatedBy != null ? src.CreatedBy.UserName : null)
-                .Map(dest => dest.Name, src => src.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Name); 
+                .Map(dest => dest.Name, src => src.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Name);
 
             TypeAdapterConfig<Product, ProductListResponse>.NewConfig()
              .Map(dest => dest.Name, src => src.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Name)
+             .Map(dest => dest.Description, src => src.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Description)
              .Map(dest => dest.BrandName, src => src.Brand != null ? src.Brand.Name : null)
-             .Map(dest => dest.IsInStock, src => src.Quantity > 0);
+             .Map(dest => dest.IsInStock, src => src.Quantity > 0)
+             .Map(dest => dest.MainImage, src => $"/Images/{src.MainImage}");
+
+            TypeAdapterConfig<Product, ProductDetailsResponse>.NewConfig()
+            .Map(dest => dest.Name, src => src.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Name)
+            .Map(dest => dest.Description, src => src.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Description)
+            .Map(dest => dest.BrandName, src => src.Brand != null ? src.Brand.Name : null)
+.Map(dest => dest.CategoryName, src =>
+    src.Category != null && src.Category.Translations != null? src.Category.Translations.FirstOrDefault(t => t.Language == CultureInfo.CurrentUICulture.Name).Name: null)
+.Map(dest => dest.IsInStock, src => src.Quantity > 0)
+            .Map(dest => dest.MainImage, src => $"/Images/{src.MainImage}")
+            .Map(dest => dest.SubImages, src => src.SubImages != null
+               ? src.SubImages.Select(img => $"/Images/{img.ImageUrl}").ToList()
+        :      new List<string>());
 
 
 

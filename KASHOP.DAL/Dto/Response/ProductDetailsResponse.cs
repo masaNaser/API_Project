@@ -8,7 +8,6 @@ namespace KASHOP.DAL.Dto.Response
 {
     public class ProductDetailsResponse: ProductListResponse
     {
-        public string Description { get; set; }
         public string CategoryName { get; set; }
         public string BrandLogo { get; set; }
         public List<string> SubImages { get; set; }

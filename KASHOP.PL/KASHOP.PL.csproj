@@ -24,7 +24,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Uploads\Images\" />
+    <None Include="wwwroot\Images\091b339a-d2a1-4053-aa0d-18ddc15577cf.png" />
+    <None Include="wwwroot\Images\26175192-4742-4f9b-9398-5eb09ce17a9e.png" />
+    <None Include="wwwroot\Images\2dbe4151-8b2f-4f28-8500-5f8a292da5ad.png" />
+    <None Include="wwwroot\Images\2e021f9b-d7e4-48b6-b050-d128a4b309cd.png" />
+    <None Include="wwwroot\Images\3ace271a-fee2-44fd-b94d-4f24307d6ee4.png" />
+    <None Include="wwwroot\Images\48f1b872-2c7c-4e44-88fd-54ee7b6ac473.png" />
+    <None Include="wwwroot\Images\4cbe8f48-7a53-4d8a-bc7b-1cf1c08eeab8.png" />
+    <None Include="wwwroot\Images\51a533c0-4418-4fdf-a9b3-759c0ef7daf4.png" />
+    <None Include="wwwroot\Images\5259c44e-9b93-4f18-93ab-e91ac57a408d.png" />
+    <None Include="wwwroot\Images\62e7cc4a-3848-4bc4-83d8-0544019b4bb9.png" />
+    <None Include="wwwroot\Images\6716b9bc-6a7f-4dfb-8cd3-23b82c480bc2.png" />
+    <None Include="wwwroot\Images\6894d6c0-1386-4e05-8d35-c34167951855.png" />
+    <None Include="wwwroot\Images\7acf05e9-9736-4bfa-9c6b-f151acaa41d5.png" />
+    <None Include="wwwroot\Images\bc865062-c4f6-4abc-9417-5c9719d4cee3.png" />
+    <None Include="wwwroot\Images\d64197f5-7c9b-4c11-b620-a8c9b6fa9b39.png" />
+    <None Include="wwwroot\Images\d6b12d45-e32b-40b5-9327-eded7a7e2b91.png" />
+    <None Include="wwwroot\Images\df440fdf-145e-4cfd-88ca-e018c4d9f929.png" />
+    <None Include="wwwroot\Images\e42f9742-1ae9-41b2-b49a-88a8050f392f.png" />
   </ItemGroup>
 
 </Project>

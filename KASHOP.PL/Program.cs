@@ -96,7 +96,7 @@ namespace KASHOP.PL
                 app.MapOpenApi();
                 app.MapScalarApiReference();
             }
-
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 

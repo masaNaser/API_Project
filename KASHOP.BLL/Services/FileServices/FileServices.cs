@@ -49,7 +49,7 @@ namespace KASHOP.BLL.Services.FileServices
                     Directory.CreateDirectory(folderPath);
                 }
                 var fileName = Guid.NewGuid().ToString() + extension;
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads/Images", fileName);
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "/Images", fileName);
 
                 using (var stream = System.IO.File.Create(filePath))
                 {

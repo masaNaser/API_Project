@@ -52,7 +52,7 @@ namespace KASHOP.BLL.Services.Category
         {
             try
             {
-                var categories = await _categoryRepository.GetAllAsync(new string[]
+                var categories = await _categoryRepository.GetAllAsync(null,new string[]
                 {
                 (nameof(DAL.Models.Category.Translations)),
                     (nameof(DAL.Models.Category.CreatedBy))
