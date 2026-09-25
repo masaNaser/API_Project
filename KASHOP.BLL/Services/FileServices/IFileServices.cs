@@ -11,5 +11,6 @@ namespace KASHOP.BLL.Services.FileServices
     public interface IFileServices
     {
         Task<Result<string>> UploadFileAsync(IFormFile file);
+        Task<Result<bool>> DeleteFileAsync(string fileName);
     }
 }

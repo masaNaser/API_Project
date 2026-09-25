@@ -12,7 +12,7 @@ namespace KASHOP.BLL.Services.Product
         private readonly IFileServices _fileServices;
         private readonly IProductRepository _productRepository;
 
-        public ProductServices(IFileServices fileServices,IProductRepository productRepository)
+        public ProductServices(IFileServices fileServices, IProductRepository productRepository)
         {
             _fileServices = fileServices;
             _productRepository = productRepository;
@@ -23,25 +23,23 @@ namespace KASHOP.BLL.Services.Product
             {
                 if (request.MainImage == null || request.MainImage.Length == 0)
                 {
-                    return new Result<bool>
-                    {
-                        Success = false,
-                        Message = "Main image is required.",
-                    };
-                }
+                //    return new Result<bool>
+                //    {
+                //        Success = false,
+                //        Message = "Main image is required.",
+                //    };
+                    return Result<bool>.FailureResult("Main image is required.");
+            }
                 var mainImageUrl = await _fileServices.UploadFileAsync(request.MainImage);
                 if (!mainImageUrl.Success)
                 {
-                    return new Result<bool>
-                    {
-                        Success = false,
-                        Message = "Failed to upload main image.",
-                    };
-                }
+               
+                return Result<bool>.FailureResult("Failed to upload main image.");
+            }
                 var subImageUrls = new List<string>();
                 //هل قام المستخدم بإرسال قائمة صور فرعية من الأساس
-                if (request.SubImages != null && request.SubImages.Any()) 
-                { 
+                if (request.SubImages != null && request.SubImages.Any())
+                {
                     foreach (var image in request.SubImages)
                     {
                         //هل هذه الصورة المحددة داخل القائمة صالحة ولها حجم، أم أنها ملف فارغ / معطوب؟
@@ -56,7 +54,7 @@ namespace KASHOP.BLL.Services.Product
                         }
 
                     }
-                 }
+                }
                 var product = request.Adapt<DAL.Models.Product>();
                 product.MainImage = mainImageUrl.Data;
                 if (subImageUrls.Any())
@@ -67,27 +65,24 @@ namespace KASHOP.BLL.Services.Product
                     }).ToList();
                 }
                 var result = await _productRepository.CreateAsync(product);
-                return new Result<bool>
-                {
-                    Success = true,
-                    Message = "Success"
-                };
+                return Result<bool>.SuccessResult(true, "Product created successfully.");
 
             }
             catch (Exception ex)
             {
-                return new Result<bool>
-                {
-                    Success = false,
-                    Message = $"An error occurred: {ex.InnerException?.Message ?? ex.Message}"
-                };
+            //    return new Result<bool>
+            //    {
+            //        Success = false,
+            //        Message = $"An error occurred: {ex.InnerException?.Message ?? ex.Message}"
+            //    };
+                return Result<bool>.FailureResult($"An error occurred: {ex.InnerException?.Message ?? ex.Message}");
             }
         }
-        public async Task<Result<List<ProductListResponse>>> GetAllProducts(Expression<Func<DAL.Models.Product, bool>>? filter=null)
+        public async Task<Result<List<ProductListResponse>>> GetAllProducts(Expression<Func<DAL.Models.Product, bool>>? filter = null)
         {
             try
             {
-                var products = await _productRepository.GetAllAsync(filter,new string[]
+                var products = await _productRepository.GetAllAsync(filter, new string[]
                 {
                     nameof(DAL.Models.Product.Translations),
                     nameof(DAL.Models.Product.Brand),
@@ -95,20 +90,12 @@ namespace KASHOP.BLL.Services.Product
                     nameof(DAL.Models.Product.SubImages),
                     nameof(DAL.Models.Product.CreatedBy)
                 });
-                return new Result<List<ProductListResponse>>
-                {
-                    Success = true,
-                    Message = "Success",
-                    Data = products.Adapt<List<ProductListResponse>>()
-                };
+             
+                return Result<List<ProductListResponse>>.SuccessResult(products.Adapt<List<ProductListResponse>>(), "Success");
             }
             catch (Exception ex)
             {
-                return new Result<List<ProductListResponse>>
-                {
-                    Success = false,
-                    Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-                };
+                return Result<List<ProductListResponse>>.FailureResult(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
             }
         }
 
@@ -124,38 +111,68 @@ namespace KASHOP.BLL.Services.Product
                     nameof(DAL.Models.Product.SubImages),
                     nameof(DAL.Models.Product.CreatedBy)
                 });
-                if (product == null)
-                {
-                    return new Result<ProductDetailsResponse>
-                    {
-                        Success = false,
-                        Message = "Product not found",
-                    };
-                }
-                return new Result<ProductDetailsResponse>
-                {
-                    Success = true,
-                    Message = "Success",
-                    Data = product.Adapt<ProductDetailsResponse>()
-                };
+                if (product == null) return Result<ProductDetailsResponse>.FailureResult("Product not found");
+               
+                return Result<ProductDetailsResponse>.SuccessResult(product.Adapt<ProductDetailsResponse>(), "Success");
             }
             catch (Exception ex)
             {
-                return new Result<ProductDetailsResponse>
-                {
-                    Success = false,
-                    Message = ex.InnerException != null ? ex.InnerException.Message : ex.Message,
-                };
+                return Result<ProductDetailsResponse>.FailureResult(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
             }
         }
 
         public Task<Result<bool>> Delete(int id)
         {
             throw new NotImplementedException();
-        }       
-        public Task<Result<ProductListResponse>> Update(int id, ProductRequest request)
+        }
+        public async Task<Result<ProductListResponse>> Update(int id, ProductRequest request)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var product = await _productRepository.GetOneAsync(p => p.Id == id);
+                if (product == null)
+                {
+                    return Result<ProductListResponse>.FailureResult("Product not found");
+                }
+
+                // إنشاء إعداد خاص لـ Mapster يمنع نسخ الـ null
+                var config = new TypeAdapterConfig();
+                config.ForType<ProductRequest,DAL.Models.Product>()
+                      .IgnoreNullValues(true) // طنّش أي حقل جاي null وخلّي القيمة القديمة
+                      .Ignore(dest => dest.MainImage); // استثني مسار الصورة عشان نعالجه يدوياً
+
+                // تنفيذ عملية المابينغ
+                request.Adapt(product, config);
+
+                // معالجة الصورة بشكل مستقل
+                if (request.MainImage != null && request.MainImage.Length > 0)
+                {
+                    var uploadResult = await _fileServices.UploadFileAsync(request.MainImage);
+                    if (uploadResult.Success)
+                    {
+                        // 3. مسح الصورة القديمة لو كانت موجودة (في حالة التعديل)
+                        if (!string.IsNullOrEmpty(product.MainImage))
+                        {
+                            // كود حذف الصورة القديمة
+                        }
+
+                        // 4. تعيين اسم الملف أو المسار المرجع في خاصية الكيان
+                        product.MainImage = uploadResult.Data;
+                    }
+                    else
+                    {
+                        // إرجاع خطأ في حال فشل رفع الصورة (مثلاً الامتداد غير مسموح أو الحجم كبير)
+                        return Result<ProductListResponse>.FailureResult(uploadResult.Message);
+                    }
+                }
+
+                await _productRepository.UpdateAsync(product);
+                return Result<ProductListResponse>.SuccessResult(null,"Product updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return Result<ProductListResponse>.FailureResult($"An error occurred: {ex.InnerException?.Message ?? ex.Message}");
+            }
         }
     }
 }

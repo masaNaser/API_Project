@@ -43,7 +43,7 @@ namespace KASHOP.BLL.Services.FileServices
                         Message = $"File Size Exceeds The Maximum Allowed Size of '{maxMb}'MB."
                     };
                 }
-                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Images");
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
@@ -69,6 +69,42 @@ namespace KASHOP.BLL.Services.FileServices
                 {
                     Success = false,
                     Message = $"An Error Occurred While Uploading The File: {errorMessage}"
+                };
+            }
+        }
+
+        public async Task<Result<bool>> DeleteFileAsync(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return new Result<bool> 
+                    { 
+                        Success = false,
+                        Message = "File name is empty."
+                    };
+                }
+                // تحديد مسار الملف الكامل على السيرفر
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Images", fileName);
+                // التأكد من وجود الملف قبل الحذف
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath); // حذف الملف من الهارد ديسك
+                    return new Result<bool>
+                    {
+                        Success = true,
+                        Message = "File deleted successfully." 
+                    };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new Result<bool> 
+                { 
+                    Success = false,
+                    Message = $"An error occurred while deleting the file: {ex.Message}"
                 };
             }
         }
