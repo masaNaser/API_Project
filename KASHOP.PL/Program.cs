@@ -17,6 +17,7 @@ using KASHOP.BLL.Mapping;
 using KASHOP.BLL.Services.Product;
 using KASHOP.BLL.Services.FileServices;
 using KASHOP.DAL.Repository.Product;
+using KASHOP.DAL.Repository.UnitOfWork;
 
 namespace KASHOP.PL
 {
@@ -38,8 +39,12 @@ namespace KASHOP.PL
             builder.Services.AddScoped<IFileServices, FileServices>();
             builder.Services.AddScoped<IProductServices,ProductServices>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 
+            builder.Services.AddProblemDetails();
             builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -86,6 +91,7 @@ namespace KASHOP.PL
 
 
             var app = builder.Build();
+            app.UseExceptionHandler();
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
             MapsterConfig.MapsterConfigRegister();
             

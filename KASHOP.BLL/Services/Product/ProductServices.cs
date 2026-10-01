@@ -2,6 +2,7 @@
 using KASHOP.DAL.Dto.Request;
 using KASHOP.DAL.Dto.Response;
 using KASHOP.DAL.Repository.Product;
+using KASHOP.DAL.Repository.UnitOfWork;
 using Mapster;
 using System.Linq.Expressions;
 
@@ -10,17 +11,16 @@ namespace KASHOP.BLL.Services.Product
     public class ProductServices : IProductServices
     {
         private readonly IFileServices _fileServices;
-        private readonly IProductRepository _productRepository;
 
-        public ProductServices(IFileServices fileServices, IProductRepository productRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public ProductServices(IFileServices fileServices, IUnitOfWork unitOfWork)
         {
             _fileServices = fileServices;
-            _productRepository = productRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Result<bool>> CreateProduct(ProductRequest request)
         {
-            try
-            {
+          
                 if (request.MainImage == null || request.MainImage.Length == 0)
                 {
                 //    return new Result<bool>
@@ -64,25 +64,17 @@ namespace KASHOP.BLL.Services.Product
                         ImageUrl = url
                     }).ToList();
                 }
-                var result = await _productRepository.CreateAsync(product);
+                var result = await _unitOfWork.ProductRepository.CreateAsync(product);
+                 await _unitOfWork.CompleteAsync();
                 return Result<bool>.SuccessResult(true, "Product created successfully.");
 
             }
-            catch (Exception ex)
-            {
-            //    return new Result<bool>
-            //    {
-            //        Success = false,
-            //        Message = $"An error occurred: {ex.InnerException?.Message ?? ex.Message}"
-            //    };
-                return Result<bool>.FailureResult($"An error occurred: {ex.InnerException?.Message ?? ex.Message}");
-            }
-        }
+      
+        
         public async Task<Result<List<ProductListResponse>>> GetAllProducts(Expression<Func<DAL.Models.Product, bool>>? filter = null)
         {
-            try
-            {
-                var products = await _productRepository.GetAllAsync(filter, new string[]
+          
+                var products = await _unitOfWork.ProductRepository.GetAllAsync(filter, new string[]
                 {
                     nameof(DAL.Models.Product.Translations),
                     nameof(DAL.Models.Product.Brand),
@@ -92,18 +84,13 @@ namespace KASHOP.BLL.Services.Product
                 });
              
                 return Result<List<ProductListResponse>>.SuccessResult(products.Adapt<List<ProductListResponse>>(), "Success");
-            }
-            catch (Exception ex)
-            {
-                return Result<List<ProductListResponse>>.FailureResult(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
-            }
+       
         }
 
         public async Task<Result<ProductDetailsResponse>> GetProduct(Expression<Func<DAL.Models.Product, bool>> filter)
         {
-            try
-            {
-                var product = await _productRepository.GetOneAsync(filter, new string[]
+
+                var product = await _unitOfWork.ProductRepository.GetOneAsync(filter, new string[]
                 {
                     nameof(DAL.Models.Product.Translations),
                     nameof(DAL.Models.Product.Brand),
@@ -114,22 +101,23 @@ namespace KASHOP.BLL.Services.Product
                 if (product == null) return Result<ProductDetailsResponse>.FailureResult("Product not found");
                
                 return Result<ProductDetailsResponse>.SuccessResult(product.Adapt<ProductDetailsResponse>(), "Success");
-            }
-            catch (Exception ex)
-            {
-                return Result<ProductDetailsResponse>.FailureResult(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
-            }
+           
         }
 
-        public Task<Result<bool>> Delete(int id)
+        public async Task<Result<bool>> Delete(int id)
         {
-            throw new NotImplementedException();
+            var product = await _unitOfWork.ProductRepository.GetOneAsync(p => p.Id == id);
+            if (product == null)
+            {
+                return Result<bool>.FailureResult("Product not found");
+            }
+             _unitOfWork.ProductRepository.DeleteAsync(product);
+             await _unitOfWork.CompleteAsync();
+            return Result<bool>.SuccessResult(true, "Product deleted successfully");
         }
         public async Task<Result<ProductListResponse>> Update(int id, ProductRequest request)
         {
-            try
-            {
-                var product = await _productRepository.GetOneAsync(p => p.Id == id);
+                var product = await _unitOfWork.ProductRepository.GetOneAsync(p => p.Id == id);
                 if (product == null)
                 {
                     return Result<ProductListResponse>.FailureResult("Product not found");
@@ -166,13 +154,10 @@ namespace KASHOP.BLL.Services.Product
                     }
                 }
 
-                await _productRepository.UpdateAsync(product);
-                return Result<ProductListResponse>.SuccessResult(null,"Product updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return Result<ProductListResponse>.FailureResult($"An error occurred: {ex.InnerException?.Message ?? ex.Message}");
-            }
+                 _unitOfWork.ProductRepository.UpdateAsync(product);
+                 await _unitOfWork.CompleteAsync();
+            return Result<ProductListResponse>.SuccessResult(null,"Product updated successfully");
+         
         }
     }
 }

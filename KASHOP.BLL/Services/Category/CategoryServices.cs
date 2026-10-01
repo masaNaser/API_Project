@@ -2,6 +2,7 @@
 using KASHOP.DAL.Dto.Response;
 using KASHOP.DAL.Models;
 using KASHOP.DAL.Repository.Category;
+using KASHOP.DAL.Repository.UnitOfWork;
 using Mapster;
 using System.Linq.Expressions;
 
@@ -9,15 +10,16 @@ namespace KASHOP.BLL.Services.Category
 {
     public class CategoryServices : ICategoryServices
     {
-        private readonly ICategoryRepository _categoryRepository;
-        public CategoryServices(ICategoryRepository categoryRepository)
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CategoryServices(IUnitOfWork unitOfWork)
         {
-            _categoryRepository = categoryRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Result<bool>> Create(CategoryRequest request)
         {
-            try
-            {
+            
+            
                 // تحويل الريكوست الى مودل عشان التعامل مع الداتا بيس 
                 var categories = request.Adapt<DAL.Models.Category>();
                 /*
@@ -26,29 +28,25 @@ namespace KASHOP.BLL.Services.Category
                 تحفظ قاعدة البيانات التصنيف وتولد له رقم معرف جديد (Id).
                 النتيجة المُرجعة في المتغير savedCategory تحتوي على البيانات الأساسية والـ Id الجديد، لكن خاصية CreatedBy (كائن المستخدم) تكون لا تزال null لأن EF Core لا يجلب العلاقات تلقائياً أثناء الحفظ.
                  */
-                var savedCategory = await _categoryRepository.CreateAsync(categories);
-                //هاد السطر عشان نرجع الكائن مع الـ CreatedById و CreatedDate و CreatedBy (كائن المستخدم) بعد الحفظ
-                // لانه هدول القيم قبل الحفظ بكونو نلل بالتالي بنحتاج نعمل انكلود عشان نجيبهم من الداتا بيس 
-                // var categoryResponse = await GetCategory(c => c.Id == savedCategory.Id);
+                var savedCategory = await _unitOfWork.CategoryRepository.CreateAsync(categories);
+                    await _unitOfWork.CompleteAsync();
+            //هاد السطر عشان نرجع الكائن مع الـ CreatedById و CreatedDate و CreatedBy (كائن المستخدم) بعد الحفظ
+            // لانه هدول القيم قبل الحفظ بكونو نلل بالتالي بنحتاج نعمل انكلود عشان نجيبهم من الداتا بيس 
+            // var categoryResponse = await GetCategory(c => c.Id == savedCategory.Id);
 
-                //return new Result<bool>
-                //{
-                //    Success = true,
-                //    Message = "Success",
-                //    //Data = true,
-                //};
-                return Result<bool>.SuccessResult(false,"Category created successfully.");
-            }
-            catch (Exception ex)
-            {
-                return Result<bool>.FailureResult(ex.InnerException?.Message ?? ex.Message);
-            }
+            //return new Result<bool>
+            //{
+            //    Success = true,
+            //    Message = "Success",
+            //    //Data = true,
+            //};
+            return Result<bool>.SuccessResult(false,"Category created successfully.");
+            
+          
         }
         public async Task<Result<List<CategoryResponse>>> GetAllCategories()
         {
-            try
-            {
-                var categories = await _categoryRepository.GetAllAsync(null,new string[]
+                var categories = await _unitOfWork.CategoryRepository.GetAllAsync(null,new string[]
                 {
                 (nameof(DAL.Models.Category.Translations)),
                     (nameof(DAL.Models.Category.CreatedBy))
@@ -59,17 +57,12 @@ namespace KASHOP.BLL.Services.Category
                     // حذفناها لانه ما رح نحتاجها لانه عدلنا بكود ال mapster عشان يجيب الترجمة بشكل تلقائي حسب اللغة الحالية
                 return Result<List<CategoryResponse>>.SuccessResult(categories.Adapt<List<CategoryResponse>>(), "Success");
             }
-            catch (Exception ex)
-            {
-                return Result<List<CategoryResponse>>.FailureResult(ex.InnerException?.Message ?? ex.Message);
-            }
-        }
+            
+        
 
         public async Task<Result<CategoryResponse>> GetCategory(Expression<Func<DAL.Models.Category, bool>> filter)
         {
-            try
-            {
-                var category = await _categoryRepository.GetOneAsync(filter, new string[]
+                var category = await _unitOfWork.CategoryRepository.GetOneAsync(filter, new string[]
                 {
                 nameof(DAL.Models.Category.Translations),
                 nameof(DAL.Models.Category.CreatedBy)
@@ -79,18 +72,11 @@ namespace KASHOP.BLL.Services.Category
                     return Result<CategoryResponse>.FailureResult("Category not found");
                 }
                 return Result<CategoryResponse>.SuccessResult(category.Adapt<CategoryResponse>(), "Success");
-            }
-            catch (Exception ex)
-            {
-                return Result<CategoryResponse>.FailureResult(ex.InnerException?.Message ?? ex.Message);
-            }
         }
 
         public async Task<Result<CategoryResponse>> Update(int id, CategoryRequest request)
         {
-            try
-            {
-                var category = await _categoryRepository.GetOneAsync(c => c.Id == id, new string[]
+                var category = await _unitOfWork.CategoryRepository.GetOneAsync(c => c.Id == id, new string[]
                 {
                 nameof(DAL.Models.Category.Translations),
                 nameof(DAL.Models.Category.CreatedBy)
@@ -101,38 +87,25 @@ namespace KASHOP.BLL.Services.Category
                 }
                 //بنستخدم Mapster لتحديث خصائص الكائن الحالي بالقيم الجديدة من الريكوست
                 request.Adapt(category);
-                await _categoryRepository.UpdateAsync(category);
+                _unitOfWork.CategoryRepository.UpdateAsync(category);
+                await _unitOfWork.CompleteAsync();
                 var updatedCategory = await GetCategory(c => c.Id == id);
                 //return updatedCategory;
              
                 return Result<CategoryResponse>.SuccessResult(updatedCategory.Data, "Category updated successfully.");
-            }
-            catch (Exception ex)
-            {
-              
-                return Result<CategoryResponse>.FailureResult(ex.InnerException?.Message ?? ex.Message);
-            }
         }
 
         public async Task<Result<bool>> Delete(int id)
         {
-            try
-            {
-                var category = await _categoryRepository.GetOneAsync(c => c.Id == id);
+                var category = await _unitOfWork.CategoryRepository.GetOneAsync(c => c.Id == id);
                 if (category == null)
                 {
                    
                     return Result<bool>.FailureResult("Category not found");
                 }
-                var deleted = await _categoryRepository.DeleteAsync(category);
-              
-                return Result<bool>.SuccessResult(deleted, deleted ? "Category deleted successfully." : "Failed to delete category.");
-            }
-            catch (Exception ex)
-            {
-              
-                return Result<bool>.FailureResult(ex.InnerException?.Message ?? ex.Message);
-            }
+                var deleted = _unitOfWork.CategoryRepository.DeleteAsync(category);
+            await _unitOfWork.CompleteAsync();
+            return Result<bool>.SuccessResult(deleted, deleted ? "Category deleted successfully." : "Failed to delete category.");
         }
 
     }
