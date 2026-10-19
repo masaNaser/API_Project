@@ -18,6 +18,7 @@ using KASHOP.BLL.Services.Product;
 using KASHOP.BLL.Services.FileServices;
 using KASHOP.DAL.Repository.Product;
 using KASHOP.DAL.Repository.UnitOfWork;
+using KASHOP.PL.Extensions;
 
 namespace KASHOP.PL
 {
@@ -32,62 +33,40 @@ namespace KASHOP.PL
             builder.Services.AddControllers();
             builder.Services.AddOpenApi();
 
-            builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
-            builder.Services.AddScoped<ICategoryServices,CategoryServices>();
-            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-            builder.Services.AddScoped<IEmailSender,EmailSender>();
-            builder.Services.AddScoped<IFileServices, FileServices>();
-            builder.Services.AddScoped<IProductServices,ProductServices>();
-            builder.Services.AddScoped<IProductRepository, ProductRepository>();
-            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddApplicationServices();
 
             builder.Services.AddProblemDetails();
             builder.Services.AddHttpContextAccessor();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddLocalization(options => options.ResourcesPath = "");
-            const string defaultCulture = "en";
-            var  supportedCulture = new[] { 
-                new CultureInfo(defaultCulture),
-                new CultureInfo("ar"),
-            };
-            builder.Services.Configure<RequestLocalizationOptions>(options =>
-            {
-                options.DefaultRequestCulture = new RequestCulture(defaultCulture);
-                options.SupportedCultures = supportedCulture;
-                options.SupportedUICultures = supportedCulture;
-            });
+            builder.Services.AddDatabaseServices(builder.Configuration);
+
+            builder.Services.AddLocalizationServices();
+            //builder.Services.AddLocalization(options => options.ResourcesPath = "");
+            //const string defaultCulture = "en";
+            //var  supportedCulture = new[] { 
+            //    new CultureInfo(defaultCulture),
+            //    new CultureInfo("ar"),
+            //};
+            //builder.Services.Configure<RequestLocalizationOptions>(options =>
+            //{
+            //    options.DefaultRequestCulture = new RequestCulture(defaultCulture);
+            //    options.SupportedCultures = supportedCulture;
+            //    options.SupportedUICultures = supportedCulture;
+            //});
 
             //«·ŒÿÊ… «·À«·À… ‰÷Ì› «·”Ì—›”
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-                //Â«Ì ‰÷Ì›Â« Õ Ï ÌﬂÊ‰ «·«Ì„Ì· ›—Ìœ ·ﬂ· „” Œœ„ «‰Â „„‰Ê⁄ ÌﬂÊ‰ ›Ì Õ”«»Ì‰ „‰ ‰›” «·«Ì„Ì· 
-                // »œ· „« ‰Õÿ ﬂÊœ Ê‰›Õ’ «·«ÌœÌ‰ Ì Ì „Ê›—… Â«Ì «·„Ì“… 
-                options.User.RequireUniqueEmail = true;
-            }).
-                AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+            //    //Â«Ì ‰÷Ì›Â« Õ Ï ÌﬂÊ‰ «·«Ì„Ì· ›—Ìœ ·ﬂ· „” Œœ„ «‰Â „„‰Ê⁄ ÌﬂÊ‰ ›Ì Õ”«»Ì‰ „‰ ‰›” «·«Ì„Ì· 
+            //    // »œ· „« ‰Õÿ ﬂÊœ Ê‰›Õ’ «·«ÌœÌ‰ Ì Ì „Ê›—… Â«Ì «·„Ì“… 
+            //    options.User.RequireUniqueEmail = true;
+            //}).
+            //    AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
-
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["ApiSettings:issuer"],
-                    ValidAudience = builder.Configuration["ApiSettings:audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["ApiSettings:SecretKey"]))
-                };
-            });
+            builder.Services.AddIdentityServices();
+            builder.Services.AddJwtAuthenticationServices(builder.Configuration);
 
 
             var app = builder.Build();
