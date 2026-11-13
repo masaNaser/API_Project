@@ -1,8 +1,10 @@
 ﻿using KASHOP.BLL.Common;
 using KASHOP.BLL.Services.Authentication;
+using KASHOP.BLL.Services.Cart;
 using KASHOP.BLL.Services.Category;
 using KASHOP.BLL.Services.FileServices;
 using KASHOP.BLL.Services.Product;
+using KASHOP.DAL.Repository.Cart;
 using KASHOP.DAL.Repository.Category;
 using KASHOP.DAL.Repository.Product;
 using KASHOP.DAL.Repository.UnitOfWork;
@@ -13,7 +15,8 @@ namespace KASHOP.PL.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<ICartServices, CartServices>();
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IEmailSender, EmailSender>();

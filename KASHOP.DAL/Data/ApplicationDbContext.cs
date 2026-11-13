@@ -16,6 +16,7 @@ namespace KASHOP.DAL.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductTranslations> ProductTranslations { get; set; }
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<CartItem> CartItem { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;

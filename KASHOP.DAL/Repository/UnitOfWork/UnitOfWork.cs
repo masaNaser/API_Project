@@ -1,4 +1,5 @@
 ﻿using KASHOP.DAL.Data;
+using KASHOP.DAL.Repository.Cart;
 using KASHOP.DAL.Repository.Category;
 using KASHOP.DAL.Repository.Product;
 using System;
@@ -21,6 +22,7 @@ namespace KASHOP.DAL.Repository.UnitOfWork
         //مرة واحدة مش كل مرة نعمل اوبجكت جديد
         private IProductRepository? _ProductRepository;
         private ICategoryRepository? _CategoryRepository;
+        private ICartRepository? _CartRepository;
         public IProductRepository ProductRepository { get
             {
                 if (_ProductRepository == null)
@@ -37,7 +39,17 @@ namespace KASHOP.DAL.Repository.UnitOfWork
                 }
                 return _CategoryRepository;
             } }
-
+        public ICartRepository CartRepository
+        {
+            get
+            {
+                if (_CartRepository == null)
+                {
+                    _CartRepository = new CartRepository(_context);
+                }
+                return _CartRepository;
+            }
+        }
         public UnitOfWork(ApplicationDbContext context) 
         {
             _context = context;

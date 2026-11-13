@@ -1,23 +1,6 @@
-
-using KASHOP.BLL.Services.Category;
-using KASHOP.DAL.Data;
-using KASHOP.DAL.Models;
-using KASHOP.DAL.Repository.Category;
-using KASHOP.BLL.Services.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
-using System.Globalization;
-using KASHOP.BLL.Common;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using KASHOP.BLL.Mapping;
-using KASHOP.BLL.Services.Product;
-using KASHOP.BLL.Services.FileServices;
-using KASHOP.DAL.Repository.Product;
-using KASHOP.DAL.Repository.UnitOfWork;
 using KASHOP.PL.Extensions;
 
 namespace KASHOP.PL

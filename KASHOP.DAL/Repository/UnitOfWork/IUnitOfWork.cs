@@ -1,4 +1,5 @@
-﻿using KASHOP.DAL.Repository.Category;
+﻿using KASHOP.DAL.Repository.Cart;
+using KASHOP.DAL.Repository.Category;
 using KASHOP.DAL.Repository.Product;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace KASHOP.DAL.Repository.UnitOfWork
     {
         IProductRepository ProductRepository { get; } //property for product repository
         ICategoryRepository CategoryRepository { get; }
-      
+        ICartRepository CartRepository { get; }
         Task<int> CompleteAsync();
     }
 }

@@ -22,7 +22,7 @@ namespace KASHOP.PL.Extensions
               ValidateIssuerSigningKey = true,
               ValidIssuer =configuration["ApiSettings:issuer"],
               ValidAudience =configuration["ApiSettings:audience"],
-              IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["ApiSettings:SecretKey"]))
+              IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["ApiSettings:SecretKey"]))
           };
       });
             services.AddAuthorization();
